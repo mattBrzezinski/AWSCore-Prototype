@@ -1,6 +1,5 @@
 module AWSCorePrototype
 
-using AWSCore
 using XMLDict
 
 include("S3/S3.jl")
