@@ -1,0 +1,20 @@
+{
+  "s3": {
+    "protocol": "rest_xml",
+    "api_version": "2006-03-01",
+    "endpoint": "s3.amazonaws.com"
+  },
+  "ec2": {
+    "protocol": "ec2",
+    "api_version": "2016-11-15"
+  },
+  "elasticache": {
+    "protocol": "query",
+    "api_version": "2015-02-02"
+  },
+  "dynamodb": {
+    "protocol": "json",
+    "api_version": "2012-08-10",
+    "json_version": "1.0"
+  }
+}
