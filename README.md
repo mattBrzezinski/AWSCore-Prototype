@@ -1,9 +1,18 @@
 ## AWSCore-Prototype
 
-This is a prototype project for [AWSCore.jl v2.0](https://github.com/JuliaCloud/AWSCore.jl)
+This project is for prototyping ideas for [AWSCore.jl v2.0](https://github.com/JuliaCloud/AWSCore.jl).
+We need to prototype ideas for both high and low level API wrappers.
 
-## How to use
+## Usage
 
-1. Create a new [bucket](https://s3.console.aws.amazon.com/s3/home?region=us-east-1)
-1. Upload some items into the bucket
-1. `julia AWSCorePrototype.jl`
+Currently testing with AWS S3, you need to create a bucket and place a few items into them.
+
+### High Level
+- Prototype-1
+  - `cd src/High-Level-Wrapper-Prototypes/Prototype-1/`
+  - `julia AWSCorePrototype.jl`
+  
+### Low Level
+- Prototype-1
+  - `cd src/Low-Level-Wrapper-Prototypes/Prototype-1/`
+  - `julia low_level_wrapper.jl`
