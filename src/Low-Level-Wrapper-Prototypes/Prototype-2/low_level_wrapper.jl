@@ -1,5 +1,8 @@
-import LazyJSON
+using AWSCore
+using XMLDict
 using JSON
+using LazyJSON
+using SymDict
 
 struct REST_XML_Operation
     name::String
@@ -7,25 +10,19 @@ struct REST_XML_Operation
     request_uri::String
 end
 
-struct JSON_Operation
-    name::String
-    parameters::Array{String}
+function Base.println(operations::Array{REST_XML_Operation})
+    for op in operations
+        println(op.name, " ", op.method, " ", op.request_uri)
+    end
 end
 
 struct Client__Rest_XML
+    credentials
     service_name::String
     api_version::String
     endpoint::String
 
     operations::Array{REST_XML_Operation}
-end
-
-struct Client__JSON
-    service_name::String
-    api_version::String
-    json_version::String
-
-    operation::Array{JSON_Operation}
 end
 
 function create_client(service_name::String)
@@ -37,8 +34,6 @@ function create_client(service_name::String)
 
     if protocol == "rest-xml"
         return _create_rest_xml_client(metadata, operations)
-    elseif protocol == "json"
-        return _create_json_client(metadata, operations)
     end
 end
 
@@ -58,49 +53,42 @@ function _create_rest_xml_client(metadata::LazyJSON.Object, operations::LazyJSON
     end
 
     return Client__Rest_XML(
-        metadata["serviceId"],
+        AWSCore.default_aws_config(),
+        lowercase(metadata["serviceId"]),
         metadata["apiVersion"],
         metadata["globalEndpoint"],
         available_operations
     )
 end
 
-function _create_json_client(metadata::LazyJSON.Object, operations::LazyJSON.Object)
-    available_operations = Array{JSON_Operation, 1}()
+function describe_operations(client::Client__Rest_XML)
+    println(json(client.operations, 4))
+end
 
-    for operation in operations
-        required_parameters = try operation[2]["input"]["required"] catch e "" end
-        required_parameters = [required_parameters]
+function describe_operation(client::Client__Rest_XML, operation::String)
+    return println(filter(op->op.name == operation, client.operations))
+end
 
-        op = JSON_Operation(
-            operation[1],  # Name of the operation
-            string.(required_parameters)
-        )
-        push!(available_operations, op)
-    end
-
-    return Client__JSON(
-        metadata["serviceId"],
-        metadata["apiVersion"],
-        metadata["jsonVersion"],
-        available_operations
+function request(client::Client__Rest_XML, request_method::String, request_uri::String, args=[])
+    return AWSCore.service_rest_xml(
+        client.credentials;
+        service=client.service_name,
+        version=client.api_version,
+        verb=request_method,
+        resource=request_uri,
+        args=args
     )
-end
-
-function request(client::Client__Rest_XML)
-    println("rest_xml")
-end
-
-function request(client::Client__JSON)
-    println("json")
 end
 
 function main()
     s3 = create_client("s3")
-    ecr = create_client("ecr")
+    describe_operation(s3, "ListBuckets")
 
-    println(json(s3, 4))
-    println(json(ecr, 4))
+    request(s3, "PUT", "/hi-this-will-only-work-once")
+
+    req = request(s3, "GET", "/")
+    buckets = xml_dict(parse_xml(string(req["Buckets"].x)))
+    println(json(buckets, 4))
 end
 
 main()
