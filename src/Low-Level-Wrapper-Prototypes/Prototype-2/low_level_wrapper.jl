@@ -10,12 +10,6 @@ struct REST_XML_Operation
     request_uri::String
 end
 
-function Base.println(operations::Array{REST_XML_Operation})
-    for op in operations
-        println(op.name, " ", op.method, " ", op.request_uri)
-    end
-end
-
 struct Client__Rest_XML
     credentials
     service_name::String
@@ -23,6 +17,12 @@ struct Client__Rest_XML
     endpoint::String
 
     operations::Array{REST_XML_Operation}
+end
+
+function Base.println(operations::Array{REST_XML_Operation})
+    for op in operations
+        println(op.name, " ", op.method, " ", op.request_uri)
+    end
 end
 
 function create_client(service_name::String)
@@ -62,11 +62,11 @@ function _create_rest_xml_client(metadata::LazyJSON.Object, operations::LazyJSON
 end
 
 function describe_operations(client::Client__Rest_XML)
-    println(json(client.operations, 4))
+    println(json([op.name for op in client.operations], 2))
 end
 
 function describe_operation(client::Client__Rest_XML, operation::String)
-    return println(filter(op->op.name == operation, client.operations))
+    println(filter(op->op.name == operation, client.operations))
 end
 
 function request(client::Client__Rest_XML, request_method::String, request_uri::String, args=[])
@@ -82,6 +82,7 @@ end
 
 function main()
     s3 = create_client("s3")
+    describe_operations(s3)
     describe_operation(s3, "ListBuckets")
 
     request(s3, "PUT", "/hi-this-will-only-work-once")

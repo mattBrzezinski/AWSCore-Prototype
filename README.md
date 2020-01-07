@@ -16,3 +16,7 @@ Currently testing with AWS S3, you need to create a bucket and place a few items
 - Prototype-1
   - `cd src/Low-Level-Wrapper-Prototypes/Prototype-1/`
   - `julia low_level_wrapper.jl`
+  
+- Prototype-2
+  - `cd src/Low-Level-Wrapper-Prototypes/Prototype-2/`
+  - `julia low_level_wrapper.jl`
